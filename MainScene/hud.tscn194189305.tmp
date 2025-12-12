@@ -1,0 +1,41 @@
+[gd_scene load_steps=3 format=3 uid="uid://tl45pq8tbfix"]
+
+[ext_resource type="Texture2D" uid="uid://b8iqkwht5wg0y" path="res://Cards/Assets/card_table.png" id="1_w7j3q"]
+[ext_resource type="Script" uid="uid://bks3hfjkfwi5" path="res://MainScene/player_hand.gd" id="2_7cmty"]
+
+[node name="Hud" type="CanvasLayer"]
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+size_flags_stretch_ratio = 0.0
+
+[node name="PanelContainer" type="PanelContainer" parent="Control"]
+layout_mode = 0
+offset_right = 1201.0
+offset_bottom = 901.0
+
+[node name="TextureRect" type="TextureRect" parent="Control/PanelContainer"]
+layout_mode = 2
+texture = ExtResource("1_w7j3q")
+expand_mode = 1
+
+[node name="PlayerHand" type="Container" parent="Control"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 658.0
+offset_right = 1191.0
+offset_bottom = 886.0
+script = ExtResource("2_7cmty")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/PlayerHand"]
+layout_mode = 2
+
+[node name="TextureButton" type="TextureButton" parent="Control/PlayerHand/HBoxContainer"]
+layout_mode = 2

@@ -1,0 +1,129 @@
+[gd_scene load_steps=11 format=3 uid="uid://tl45pq8tbfix"]
+
+[ext_resource type="Script" uid="uid://c7vh72jxpxdwd" path="res://MainScene/hud.gd" id="1_7fo13"]
+[ext_resource type="Texture2D" uid="uid://b8iqkwht5wg0y" path="res://Cards/Assets/card_table.png" id="1_w7j3q"]
+[ext_resource type="Script" uid="uid://bks3hfjkfwi5" path="res://MainScene/player_hand.gd" id="2_7cmty"]
+[ext_resource type="Script" uid="uid://chhbkkdq2cb3p" path="res://MainScene/cards_in_game.gd" id="3_3mckw"]
+[ext_resource type="Texture2D" uid="uid://ik861ou0ano7" path="res://Cards/Assets/attack.png" id="5_rlo1q"]
+[ext_resource type="Script" uid="uid://co3owpe3qpbpa" path="res://MainScene/move_cost.gd" id="5_yyjba"]
+[ext_resource type="Texture2D" uid="uid://cw1wb1japmbaa" path="res://Cards/Assets/defence.png" id="6_7u3r6"]
+[ext_resource type="AudioStream" uid="uid://bs6if76bwmkde" path="res://Cards/Assets/move_cost_decrease.wav" id="6_asax1"]
+[ext_resource type="Texture2D" uid="uid://blyn3fvxckqbi" path="res://Cards/Assets/start_tour.png" id="7_47vig"]
+[ext_resource type="FontFile" uid="uid://cfsfq6w27oa6y" path="res://Cards/Assets/Charmonman-Regular.ttf" id="10_7u3r6"]
+
+[node name="Hud" type="CanvasLayer"]
+script = ExtResource("1_7fo13")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+size_flags_stretch_ratio = 0.0
+
+[node name="PanelContainer" type="PanelContainer" parent="Control"]
+layout_mode = 0
+offset_right = 1201.0
+offset_bottom = 901.0
+
+[node name="TextureRect" type="TextureRect" parent="Control/PanelContainer"]
+layout_mode = 2
+texture = ExtResource("1_w7j3q")
+expand_mode = 1
+
+[node name="PlayerHand" type="Container" parent="Control"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 632.0
+offset_right = 1196.0
+offset_bottom = 860.0
+script = ExtResource("2_7cmty")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/PlayerHand"]
+layout_mode = 2
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="Control/PlayerHand"]
+position = Vector2(17, -547)
+
+[node name="Timer" type="Timer" parent="Control/PlayerHand"]
+wait_time = 0.3
+one_shot = true
+
+[node name="CardsInGame" type="Container" parent="Control"]
+layout_mode = 0
+offset_left = 290.0
+offset_top = 272.0
+offset_right = 940.0
+offset_bottom = 525.0
+script = ExtResource("3_3mckw")
+
+[node name="HBoxContainer" type="HFlowContainer" parent="Control/CardsInGame"]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+theme_override_constants/v_separation = 50
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control"]
+layout_mode = 0
+offset_left = 956.0
+offset_top = 389.0
+offset_right = 1168.0
+offset_bottom = 489.0
+alignment = 1
+
+[node name="Attack" type="TextureButton" parent="Control/HBoxContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture_normal = ExtResource("5_rlo1q")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Defence" type="TextureButton" parent="Control/HBoxContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture_normal = ExtResource("6_7u3r6")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="MoveCost" type="HBoxContainer" parent="Control"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 855.0
+offset_right = 1201.0
+offset_bottom = 900.0
+theme_override_constants/separation = 20
+script = ExtResource("5_yyjba")
+
+[node name="MoveCostSound" type="AudioStreamPlayer2D" parent="."]
+position = Vector2(2, 855)
+stream = ExtResource("6_asax1")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+offset_left = 983.0
+offset_top = 490.0
+offset_right = 1137.0
+offset_bottom = 628.0
+
+[node name="Start" type="TextureButton" parent="CenterContainer"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+texture_normal = ExtResource("7_47vig")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="whose_turn" type="Label" parent="."]
+offset_left = 266.0
+offset_top = 352.0
+offset_right = 949.0
+offset_bottom = 507.0
+theme_override_constants/outline_size = 12
+theme_override_constants/shadow_outline_size = 8
+theme_override_fonts/font = ExtResource("10_7u3r6")
+theme_override_font_sizes/font_size = 40
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="timeout" from="Control/PlayerHand/Timer" to="Control/PlayerHand" method="_on_timer_timeout"]

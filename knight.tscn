@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://ct2fb8ld7et42"]
+
+[ext_resource type="Script" uid="uid://7tvbt1i5fopb" path="res://Cards/card_knight.gd" id="1_nsuie"]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_nsuie")

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://e16stwmxqhuq"]
+
+[ext_resource type="Script" uid="uid://ctt0brqje8qm3" path="res://Golem.gd" id="1_mmnug"]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_mmnug")
