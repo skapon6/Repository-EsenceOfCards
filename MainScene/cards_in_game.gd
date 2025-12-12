@@ -6,6 +6,7 @@ class_name CardsInGame extends Container
 signal update_tour(prediction : bool, card: CardBase)
 
 func _ready() -> void:
+	
 	GameManager.cards_in_game = self
 	update_tour.connect(GameManager.update_tour_in_tab)
 
