@@ -33,6 +33,7 @@ func add_label(slot : TextureButton, card : CardBase) -> void:
 
 	
 func return_all_cards() -> void:
+	print("returnssss")
 	for card in h_box_container.get_children():
 		print("cardssssssss", card)
 		card.queue_free()
