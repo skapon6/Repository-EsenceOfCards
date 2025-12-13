@@ -34,4 +34,3 @@ func reset_stats() -> void:
 	if effect_applied:
 		shield = base_shield
 		effect_applied = false
-

@@ -114,7 +114,6 @@ func end_tour() -> void:
 		TOUR.OPONENT:
 			current_tour = TOUR.PLAYER
 			can_start_tour.emit(true)
-			oponent._return_cards_from_table()
 	reset_cards_stats.emit()
 	start_tour()
 			
@@ -128,12 +127,14 @@ func resolve_tour() -> void:
 	
 	match current_tour:
 		TOUR.PLAYER:
-			resolve_player_tour()
+			await resolve_player_tour()
 		TOUR.OPONENT:
-			resolve_opponent_tour()
+			await resolve_opponent_tour()
 	
 	consume_move_cost(player_selected_action)
 	cards_in_game.return_all_cards_on_table(cards_on_table)
+	await get_tree().process_frame
+	end_tour()
 	
 func consume_move_cost(player_selected_action : ACTION) -> void:
 	GameManager.player.current_move_cost -= pending_move_cost
@@ -150,17 +151,26 @@ func consume_move_cost(player_selected_action : ACTION) -> void:
 func resolve_player_tour() -> void:
 	oponent._pick_random_card()
 	oponent.show_oponents_cards()
+	await get_tree().create_timer(1.5).timeout
 	var opponent_action = [ACTION.ATTACK, ACTION.DEFENCE][randi() % 2]
 	run_effects_on_card(check_synergies())
 	resolve_actions(current_action, opponent_action, true)
+	await get_tree().create_timer(2.0).timeout
+	oponent._return_cards_from_table()
+	await get_tree().create_timer(1.0).timeout
 	
 
 func resolve_opponent_tour() -> void:
 	print("oponents tour resolved")
 	oponent._pick_random_card()
+	oponent.show_oponents_cards()
+	await get_tree().create_timer(1.5).timeout
 	var opponent_action = [ACTION.ATTACK, ACTION.DEFENCE][randi() % 2]
 	run_effects_on_card(check_synergies())
 	resolve_actions(player_selected_action, opponent_action, false)
+	await get_tree().create_timer(2.0).timeout
+	oponent._return_cards_from_table()
+	await get_tree().create_timer(1.0).timeout
 	
 
 func resolve_actions(player_act: ACTION, opponent_act: ACTION, is_player_turn: bool) -> void:

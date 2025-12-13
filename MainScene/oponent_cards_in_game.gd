@@ -10,6 +10,7 @@ func _ready() -> void:
 	
 func add_card(card : CardBase) -> void:
 	var slot_on_table = TextureButton.new()
+	slot_on_table.modulate.a = 0
 	add_label(slot_on_table, card)
 	slot_on_table.custom_minimum_size = Vector2(140, 140)
 	slot_on_table.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -18,6 +19,9 @@ func add_card(card : CardBase) -> void:
 	slot_on_table.ignore_texture_size = true
 	slot_on_table.texture_normal = card.graphic	
 	h_box_container.add_child(slot_on_table)
+	
+	var tween = create_tween()
+	tween.tween_property(slot_on_table, "modulate:a", 1, 0.5)
 	
 func add_label(slot : TextureButton, card : CardBase) -> void:
 	var hp_label = Label.new()
@@ -32,9 +36,18 @@ func add_label(slot : TextureButton, card : CardBase) -> void:
 
 
 	
+func update_cards_hp(cards: Array) -> void:
+	var card_slots = h_box_container.get_children()
+	for i in range(min(len(cards), len(card_slots))):
+		var hp_label = card_slots[i].get_node_or_null("HpLabel")
+		if hp_label:
+			hp_label.text = str(int(cards[i].hp))
+
 func return_all_cards() -> void:
 	print("returnssss")
 	for card in h_box_container.get_children():
 		print("cardssssssss", card)
-		card.queue_free()
+		var tween = create_tween()
+		tween.tween_property(card, "modulate:a", 0, 0.5)
+		tween.tween_callback(card.queue_free)
 		
