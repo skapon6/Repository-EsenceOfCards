@@ -2,11 +2,11 @@ class_name CardsInGame extends Container
 
 @onready var player_hand: PlayerHand = $"../PlayerHand"
 @onready var h_box_container: HFlowContainer = $HBoxContainer
+#@onready var move_cost: MoveCost = $"../MoveCost"
 
 signal update_tour(prediction : bool, card: CardBase)
 
 func _ready() -> void:
-	
 	GameManager.cards_in_game = self
 	update_tour.connect(GameManager.update_tour_in_tab)
 
@@ -35,8 +35,7 @@ func add_card_and_delete_slot(slot: TextureButton, card: CardBase):
 	slot_on_table.connect("pressed", Callable(self, "enable_slot_and_return_card").bind(slot, slot_on_table, card))
 	
 	h_box_container.add_child(slot_on_table)
-	if player_hand:
-		player_hand.can_start_tour.emit(true)
+	player_hand.can_start_tour.emit(true)
 
 
 
@@ -46,6 +45,7 @@ func enable_slot_and_return_card(slot: TextureButton, slot_on_table : TextureBut
 	tween.tween_property(slot_on_table,"global_position", slot_global_pos,0.75)
 	tween.parallel().tween_property(slot_on_table,"modulate:a", 0, 0.75)
 	await  tween.finished
+	
 	
 	GameManager.cards_on_table.erase(card)
 	
@@ -74,26 +74,15 @@ func add_label(slot : TextureButton, card : CardBase) -> void:
 var slot_number = null
 var help_array = []
 func return_all_cards_on_table(array : Array) -> void:
-	# Znajdź wolne sloty w PlayerHand (sloty, które nie mają grafiki karty)
-	if not player_hand:
-		return
-	var free_slots := []
-	for s in player_hand.h_box_container.get_children():
-		if s is TextureButton:
-			# uznajemy wolny slot gdy nie ma w nim "CardGraphic" i nie jest disabled
-			if not s.has_node("CardGraphic") and not s.disabled:
-				free_slots.append(s)
-	# Dla każdej karty na stole przypisz pierwszy wolny slot (jeśli jest)
 	for i in range(len(array)):
-		if free_slots.size() == 0:
-			break
-		var card = array[i] as CardBase
-		var player_hand_slot = free_slots.pop_front()
-		var cards_in_game_slot = null
-		if i < h_box_container.get_child_count():
-			cards_in_game_slot = h_box_container.get_child(i)
-		# Jeżeli slot z pola istnieje, przenieś go z powrotem
-		if cards_in_game_slot:
-			enable_slot_and_return_card(player_hand_slot, cards_in_game_slot, card, false)
-	# Po przywróceniu — oczyść tablicę kart na stole
-	array.clear()
+		var element = array[i] as CardBase
+		for j in player_hand.get_child(0).get_children():
+				if j.disabled:
+					help_array.append(j)
+					slot_number = help_array[0]
+		var player_hand_container = slot_number
+		var cards_in_game = h_box_container.get_child(i)
+		enable_slot_and_return_card(player_hand_container, cards_in_game, element,false)
+		help_array.pop_front()
+
+	
