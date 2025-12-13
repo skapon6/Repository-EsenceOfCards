@@ -31,15 +31,11 @@ func _disable_button(can : bool) -> void:
 
 
 func _on_attack_pressed() -> void:
-	#defence.modulate = Color("white")
-	#attack.modulate = Color("red")
 	attack.modulate.a = 1
 	GameManager.current_action=GameManager.ACTION.ATTACK
 	defence.modulate.a = 0.3
 	
 func _on_defence_pressed() -> void:
-	#attack.modulate = Color("white")
-	#defence.modulate = Color("blue")
 	defence.modulate.a = 1
 	attack.modulate.a = 0.3
 	GameManager.current_action=GameManager.ACTION.DEFENCE

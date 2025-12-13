@@ -37,16 +37,11 @@ func run_effects(_effect : String) -> void:
 	
 	
 func reset_stats() -> void:
-	# Resetowanie statystyk po zakończeniu tury, jeśli efekty były aktywne
 	if effect_applied:
-		# Tutaj należy dodać logikę resetującą modyfikatory
 		pass
 	effect_applied = false
 	pass
 	
 func _run_bonus() -> void:
-	# Mechanika losowego efektu/bonusu
 	if randf() < bonus_chance:
-		# Logika uruchomienia bonusa
-		pass
 		effect_applied = true

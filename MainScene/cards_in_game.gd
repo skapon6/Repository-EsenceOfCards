@@ -2,7 +2,7 @@ class_name CardsInGame extends Container
 
 @onready var player_hand: PlayerHand = $"../PlayerHand"
 @onready var h_box_container: HFlowContainer = $HBoxContainer
-#@onready var move_cost: MoveCost = $"../MoveCost"
+ 
 
 signal update_tour(prediction : bool, card: CardBase)
 

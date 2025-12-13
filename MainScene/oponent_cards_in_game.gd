@@ -1,7 +1,7 @@
 class_name OponentCardsInGame extends Container
 
 @onready var h_box_container: HFlowContainer = $HBoxContainer
-#@onready var move_cost: MoveCost = $"../MoveCost"
+ 
 
 signal update_tour(card: CardBase)
 
@@ -44,9 +44,7 @@ func update_cards_hp(cards: Array) -> void:
 			hp_label.text = str(int(cards[i].hp))
 
 func return_all_cards() -> void:
-	print("returnssss")
 	for card in h_box_container.get_children():
-		print("cardssssssss", card)
 		var tween = create_tween()
 		tween.tween_property(card, "modulate:a", 0, 0.5)
 		tween.tween_callback(card.queue_free)

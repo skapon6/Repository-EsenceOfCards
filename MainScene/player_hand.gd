@@ -34,11 +34,6 @@ func _ready() -> void:
 
 	call_deferred("save_base_positions")
 
-'''func add_initial_cards(debug_card: CardBase) -> void:
-	for i in range(8):
-		add_card(debug_card)
-	save_base_positions()'''
-
 
 func create_slot():
 	for i in range(SLOT):

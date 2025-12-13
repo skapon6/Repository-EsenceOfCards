@@ -20,13 +20,10 @@ func decrease_hp(amount : float) -> void:
 		card.hp -= damage_per_card
 		card.hp = max(0, card.hp)
 		print("Card: ", card.card_name, " HP: ", card.hp)
-	
-	# Update HP labels on cards
-	oponent_cards_in_game.update_cards_hp(cards_on_table)
-	
-	# Update UI display
-	if cards_on_table.size() > 0:
-		GameManager.pass_stats_to_board.emit(
+		oponent_cards_in_game.update_cards_hp(cards_on_table)
+
+		if cards_on_table.size() > 0:
+			GameManager.pass_stats_to_board.emit(
 			GameManager.calculate_player_damage(),
 			GameManager.calculate_player_shield(),
 			GameManager.calculate_opponent_shield(),
