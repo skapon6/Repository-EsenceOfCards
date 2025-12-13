@@ -1,7 +1,6 @@
 extends Node
 
 
-# References to important nodes / state used by the manager
 var player : Player = null
 var player_hand: PlayerHand = null
 var cards_in_game : CardsInGame = null
@@ -11,11 +10,9 @@ var oponent : Oponent
 var oponent_cards : Array[CardBase]
 var oponent_cards_on_table : Array[CardBase]
 
-# Current turn + currently selected action
 var current_tour : TOUR
 var current_action : ACTION
 
-# Runtime variables used during resolution
 var direct_damage : float = 0
 var player_selected_action : ACTION
 var player_mod : Dictionary
@@ -34,7 +31,6 @@ var all_cards := [
 
 
 
-## Signals ----------------------------------------------
 # pass_stats_to_board: used to preview stats in HUD/board when playing/removing cards
 signal pass_stats_to_board(damage: float, shield : float, enemy_shield : float, enemies_card_hp: float, enemy_hp: float)
 # whose_turn: emitted when a new turn starts so HUD can display whose turn it is
@@ -46,7 +42,6 @@ signal can_start_tour(can : bool)
 signal started_tour
 
 func _ready() -> void:
-	# Initial setup: start with player turn and default action
 	current_tour = TOUR.PLAYER
 	current_action = ACTION.ATTACK
 
@@ -54,11 +49,9 @@ func _ready() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 
-	# Draw initial hand for player
 	for i in range(player_hand.SLOT):
 		draw_cards()
 
-	# Notify listeners that the first turn is starting
 	start_tour()
 
 
@@ -111,25 +104,16 @@ func get_action_modifiers(action : ACTION) -> Dictionary:
 				"shield_multiplier" : 0
 			}
 
-	
 func start_tour() -> void:
-	# Called whenever a new turn begins. Responsibilities:
-	# - prepare temporary state (e.g. copy move cost)
-	# - emit `whose_turn` so HUD and other systems update
-	# - NOTE: actual resolution (playing cards / AI) is started by pressing Start / calling resolve_tour()
 	print("Oponents card: ", oponent_cards)
 	print("Oponents cards in game", oponent_cards_on_table)
 	GameManager.player.current_move_cost_temp = GameManager.player.current_move_cost
 	whose_turn.emit(current_tour)
-
-	# Keep start_tour lightweight: it only announces the new turn.
-	# resolve_tour() performs the action resolution and ends the turn.
 	pass
 	
 	
 	
 func end_tour() -> void:
-	# Swap active side and notify systems that a new turn may start
 	match current_tour:
 		TOUR.PLAYER:
 			current_tour = TOUR.OPONENT
@@ -138,41 +122,28 @@ func end_tour() -> void:
 			current_tour = TOUR.PLAYER
 			can_start_tour.emit(true)
 
-	# Tell cards to clear temporary visual/effects
 	reset_cards_stats.emit()
-
-	# Begin next turn (announces via whose_turn)
 	start_tour()
 			
 
 func resolve_tour() -> void:
-	# Entry point to resolve the current turn. Typical flow:
-	# 1. lock in player's selected action for this resolution
-	# 2. calculate pending move cost from played cards
-	# 3. run the appropriate resolve flow for player or opponent
-	# 4. apply move cost, return cards to hand/table, and finish the turn
 	player_selected_action = current_action
 
-	# compute total move cost for cards currently on table
 	pending_move_cost = 0
 	for c in cards_on_table:
 		pending_move_cost += c.move_cost
 
-	# run the async resolution (uses timers inside to show animations)
 	match current_tour:
 		TOUR.PLAYER:
 			await resolve_player_tour()
 		TOUR.OPONENT:
 			await resolve_opponent_tour()
 
-	# deduct the used move points
 	consume_move_cost(player_selected_action)
 
-	# return cards back to player's slots and refresh UI
 	cards_in_game.return_all_cards_on_table(cards_on_table)
 	await get_tree().process_frame
 
-	# end the current turn and trigger the next
 	end_tour()
 	
 func consume_move_cost(player_selected_action : ACTION) -> void:
@@ -188,10 +159,6 @@ func consume_move_cost(player_selected_action : ACTION) -> void:
 	
 
 func resolve_player_tour() -> void:
-	# Player-initiated resolution sequence
-	# - opponent reveals random cards and chooses a random action
-	# - run card effects (synergies) then resolve action outcomes
-	# - wait timers to give time for animations/visuals
 	oponent._pick_random_card()
 	oponent.show_oponents_cards()
 	await get_tree().create_timer(1.5).timeout
@@ -204,9 +171,6 @@ func resolve_player_tour() -> void:
 	
 
 func resolve_opponent_tour() -> void:
-	# Opponent-initiated resolution sequence
-	# Similar to player flow, but uses `player_selected_action` (the last player choice)
-	# to determine how the player's side behaves when opponent resolves.
 	print("oponents tour resolved")
 	oponent._pick_random_card()
 	oponent.show_oponents_cards()
@@ -220,7 +184,6 @@ func resolve_opponent_tour() -> void:
 	
 
 func resolve_actions(player_act: ACTION, opponent_act: ACTION, is_player_turn: bool) -> void:
-	# Compute modifiers based on chosen actions and calculate final damage / shield values
 	player_mod = get_action_modifiers(player_act)
 	oponent_mod = get_action_modifiers(opponent_act)
 
@@ -232,10 +195,9 @@ func resolve_actions(player_act: ACTION, opponent_act: ACTION, is_player_turn: b
 	var damage_to_enemy = calc_direct_damage(player_damage, enemy_shield)
 	var damage_to_player = calc_direct_damage(enemy_damage, player_shield)
 
-	# Branch on combination of actions (attack/defence) and apply side-effects
 	match [player_act, opponent_act]:
 		[ACTION.ATTACK, ACTION.ATTACK]:
-			# both attack: both sides deal damage (order determined by is_player_turn)
+			# both attack: both sides deal damage
 			if is_player_turn:
 				print("⚔️ Gracz atakuje, przeciwnik kontratakuje")
 			else:
@@ -251,7 +213,7 @@ func resolve_actions(player_act: ACTION, opponent_act: ACTION, is_player_turn: b
 			apply_damage(damage_to_enemy, damage_to_player, is_player_turn)
 
 		[ACTION.DEFENCE, ACTION.ATTACK]:
-			# defender regains a move point (simple mechanic)
+			# defender regains a move point
 			player.current_move_cost+=1
 			if is_player_turn:
 				print("🛡 Gracz się broni, przeciwnik atakuje")
@@ -264,7 +226,6 @@ func resolve_actions(player_act: ACTION, opponent_act: ACTION, is_player_turn: b
 			player.current_move_cost+=1
 			print("🛡 Obie strony się bronią")
 
-	# After resolving actions, finish the turn (switch side and announce)
 	end_tour()
 
 func apply_damage(damage_to_enemy: float, damage_to_player : float, is_player_turn: bool) -> void:
