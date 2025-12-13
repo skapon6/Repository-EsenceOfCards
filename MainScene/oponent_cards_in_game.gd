@@ -25,7 +25,7 @@ func add_card(card : CardBase) -> void:
 	
 func add_label(slot : TextureButton, card : CardBase) -> void:
 	var hp_label = Label.new()
-	hp_label.text = str(card.hp)
+	hp_label.text = str(int(card.hp))
 	hp_label.name = "HpLabel"
 	hp_label.position = Vector2(50, 150) 
 	hp_label.scale = Vector2(0.8,0.8)
@@ -42,6 +42,7 @@ func update_cards_hp(cards: Array) -> void:
 		var hp_label = card_slots[i].get_node_or_null("HpLabel")
 		if hp_label:
 			hp_label.text = str(int(cards[i].hp))
+			print(str(int(cards[i].hp)))
 
 func return_all_cards() -> void:
 	for card in h_box_container.get_children():
