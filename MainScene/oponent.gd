@@ -21,7 +21,6 @@ func decrease_hp(amount : float) -> void:
 		card.hp = max(0, card.hp)
 		print("Card: ", card.card_name, " HP: ", card.hp)
 		oponent_cards_in_game.update_cards_hp(cards_on_table)
-		
 
 		if cards_on_table.size() > 0:
 			GameManager.pass_stats_to_board.emit(
