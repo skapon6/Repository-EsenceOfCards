@@ -4,6 +4,7 @@ var ctric_chance : float = 0.25
 var graphic : Texture2D = preload("res://Cards/Assets/golem_card.jpg")
 
 
+
 func _init() -> void:
 	card_name = "Golem"
 	move_cost = 2
@@ -33,3 +34,4 @@ func reset_stats() -> void:
 	if effect_applied:
 		shield = base_shield
 		effect_applied = false
+
