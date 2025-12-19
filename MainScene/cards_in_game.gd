@@ -85,4 +85,15 @@ func return_all_cards_on_table(array : Array) -> void:
 		enable_slot_and_return_card(player_hand_container, cards_in_game, element,false)
 		help_array.pop_front()
 
-	
+func update_cards_hp(cards: Array[CardBase]) -> void:
+	var card_slots = h_box_container.get_children()
+	# Iterujemy po slotach na stole i aktualizujemy ich etykiety HP
+	for i in range(min(cards.size(), card_slots.size())):
+		var hp_label = card_slots[i].get_node_or_null("HpLabel")
+		if hp_label:
+			hp_label.text = str(int(cards[i].hp))
+		if cards[i].hp <= 0:
+			pass
+
+func cards_died() -> void:
+	pass

@@ -228,11 +228,25 @@ func resolve_actions(player_act: ACTION, opponent_act: ACTION, is_player_turn: b
 
 	end_tour()
 
-func apply_damage(damage_to_enemy: float, damage_to_player : float, is_player_turn: bool) -> void:
-	if is_player_turn:
+func apply_damage(damage_to_enemy: float, damage_to_player: float, is_player_turn: bool) -> void:
+	# Obrażenia dla przeciwnika i jego kart
+	if damage_to_enemy > 0:
 		oponent.decrease_hp(damage_to_enemy)
-	else:
+
+	# Obrażenia dla gracza i jego kart
+	if damage_to_player > 0:
+		# Najpierw zadajemy obrażenia bohaterowi
 		player.decrease_hp(damage_to_player)
+		
+		# Rozdzielamy obrażenia na karty gracza (analogicznie do mechaniki przeciwnika)
+		if cards_on_table.size() > 0:
+			var damage_per_card = damage_to_player / float(cards_on_table.size())
+			for card in cards_on_table:
+				card.hp -= damage_per_card
+				card.hp = max(0, card.hp)
+			
+			# Aktualizujemy wyświetlanie HP na kartach gracza
+			cards_in_game.update_cards_hp(cards_on_table)
 
 
 func check_synergies() -> Dictionary:
