@@ -1,6 +1,7 @@
 class_name Golem extends CardBase
 
 # Testowy komentarz - Godot Architect AI
+# Drugi testowy komentarz - Godot Architect AI (Update)
 
 var ctric_chance : float = 0.25
 var graphic : Texture2D = preload("res://Cards/Assets/golem_card.jpg")
